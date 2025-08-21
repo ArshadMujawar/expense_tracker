@@ -6,11 +6,11 @@ import '../models/user.dart';
 class AuthService {
 
   //Development URLs
-  //final baseUrl = "http://192.168.25.162:9090/api";
+  //final baseUrl = "http://192.168.81.162:9090/api";
   //static const String baseUrl = 'http://localhost:9090/api'; // Change this to your Spring Boot server URL
 
   //production URL
-  static const String baseUrl = 'https://personal-finance-app.up.railway.app/api';
+  static const String baseUrl = 'https://personal-finance-app-f550.onrender.com/api';
   static const String tokenKey = 'jwt_token';
   static const String userKey = 'user_data';
 

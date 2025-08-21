@@ -4,6 +4,8 @@ import '../providers/auth_provider.dart';
 import 'login_screen.dart';
 import 'expenses_screen.dart';
 import 'budgets_screen.dart';
+import 'categories_screen.dart';
+import 'analytics_screen.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -197,9 +199,8 @@ class HomeScreen extends StatelessWidget {
                           Icons.category,
                           Colors.orange,
                               () {
-                            // TODO: Navigate to categories screen
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(content: Text('Categories - Coming Soon!')),
+                            Navigator.of(context).push(
+                              MaterialPageRoute(builder: (context) => const CategoriesScreen()),
                             );
                           },
                         ),
@@ -220,9 +221,8 @@ class HomeScreen extends StatelessWidget {
                           Icons.analytics,
                           Colors.purple,
                               () {
-                            // TODO: Navigate to analytics screen
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(content: Text('Analytics - Coming Soon!')),
+                            Navigator.of(context).push(
+                              MaterialPageRoute(builder: (context) => const AnalyticsScreen()),
                             );
                           },
                         ),

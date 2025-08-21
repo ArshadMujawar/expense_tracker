@@ -1,22 +1,34 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import '../services/auth_service.dart';
 import '../models/expense.dart';
 
 class ExpenseService {
+  final AuthService _authService = AuthService();
 
   //Development URLs
-  //final baseUrl = "http://192.168.25.162:9090/api";
+  //final baseUrl = "http://192.168.81.162:9090/api";
   //static const String baseUrl = 'http://localhost:8080/api';
 
   //production URL
-  static const String baseUrl = 'https://personal-finance-app.up.railway.app/api';
+  static const String baseUrl = 'https://personal-finance-app-f550.onrender.com/api';
+
+  Future<Map<String, String>> _getAuthHeaders() async {
+    final token = await _authService.getToken();
+    final headers = <String, String>{'Content-Type': 'application/json'};
+    if (token != null && token.isNotEmpty) {
+      headers['Authorization'] = 'Bearer $token';
+    }
+    return headers;
+  }
 
   // Get all expenses for a user
   Future<List<Expense>> getAllExpenses(int userId) async {
     try {
+      final headers = await _getAuthHeaders();
       final response = await http.get(
         Uri.parse('$baseUrl/expenses?userId=$userId'),
-        headers: {'Content-Type': 'application/json'},
+        headers: headers,
       );
 
       if (response.statusCode == 200) {
@@ -33,9 +45,10 @@ class ExpenseService {
   // Get expenses by category
   Future<List<Expense>> getExpensesByCategory(int userId, String category) async {
     try {
+      final headers = await _getAuthHeaders();
       final response = await http.get(
         Uri.parse('$baseUrl/expenses/category/$category?userId=$userId'),
-        headers: {'Content-Type': 'application/json'},
+        headers: headers,
       );
 
       if (response.statusCode == 200) {
@@ -52,9 +65,10 @@ class ExpenseService {
   // Create new expense
   Future<Expense> createExpense(int userId, double amount, String category, DateTime date, String description) async {
     try {
+      final headers = await _getAuthHeaders();
       final response = await http.post(
         Uri.parse('$baseUrl/expenses?userId=$userId'),
-        headers: {'Content-Type': 'application/json'},
+        headers: headers,
         body: json.encode({
           'amount': amount,
           'category': category,
@@ -76,9 +90,10 @@ class ExpenseService {
   // Update expense
   Future<Expense> updateExpense(int expenseId, int userId, double amount, String category, DateTime date, String description) async {
     try {
+      final headers = await _getAuthHeaders();
       final response = await http.put(
         Uri.parse('$baseUrl/expenses/$expenseId?userId=$userId'),
-        headers: {'Content-Type': 'application/json'},
+        headers: headers,
         body: json.encode({
           'amount': amount,
           'category': category,
@@ -100,9 +115,10 @@ class ExpenseService {
   // Delete expense
   Future<bool> deleteExpense(int expenseId, int userId) async {
     try {
+      final headers = await _getAuthHeaders();
       final response = await http.delete(
         Uri.parse('$baseUrl/expenses/$expenseId?userId=$userId'),
-        headers: {'Content-Type': 'application/json'},
+        headers: headers,
       );
 
       return response.statusCode == 204;
@@ -114,9 +130,10 @@ class ExpenseService {
   // Get analytics by category
   Future<Map<String, double>> getExpensesByCategoryAnalytics(int userId) async {
     try {
+      final headers = await _getAuthHeaders();
       final response = await http.get(
         Uri.parse('$baseUrl/expenses/analytics/by-category?userId=$userId'),
-        headers: {'Content-Type': 'application/json'},
+        headers: headers,
       );
 
       if (response.statusCode == 200) {
@@ -133,9 +150,10 @@ class ExpenseService {
   // Get total expenses
   Future<double> getTotalExpenses(int userId) async {
     try {
+      final headers = await _getAuthHeaders();
       final response = await http.get(
         Uri.parse('$baseUrl/expenses/analytics/total?userId=$userId'),
-        headers: {'Content-Type': 'application/json'},
+        headers: headers,
       );
 
       if (response.statusCode == 200) {

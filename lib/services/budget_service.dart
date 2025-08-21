@@ -1,22 +1,34 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import '../models/budget.dart';
+import '../services/auth_service.dart';
 
 class BudgetService {
+  final AuthService _authService = AuthService();
 
   //Development URLs
-  //final baseUrl = "http://192.168.25.162:9090/api";
+  //final baseUrl = "http://192.168.81.162:9090/api";
   //static const String baseUrl = 'http://localhost:8080/api';
 
   //production URL
-  static const String baseUrl = 'https://personal-finance-app.up.railway.app/api';
+  static const String baseUrl = 'https://personal-finance-app-f550.onrender.com/api';
+
+  Future<Map<String, String>> _getAuthHeaders() async {
+    final token = await _authService.getToken();
+    final headers = <String, String>{'Content-Type': 'application/json'};
+    if (token != null && token.isNotEmpty) {
+      headers['Authorization'] = 'Bearer $token';
+    }
+    return headers;
+  }
 
   // Get all budgets for a user
   Future<List<Budget>> getAllBudgets(int userId) async {
     try {
+      final headers = await _getAuthHeaders();
       final response = await http.get(
         Uri.parse('$baseUrl/budgets?userId=$userId'),
-        headers: {'Content-Type': 'application/json'},
+        headers: headers,
       );
 
       if (response.statusCode == 200) {
@@ -33,9 +45,10 @@ class BudgetService {
   // Get budget by month
   Future<Budget?> getBudgetByMonth(int userId, String month) async {
     try {
+      final headers = await _getAuthHeaders();
       final response = await http.get(
         Uri.parse('$baseUrl/budgets/month/$month?userId=$userId'),
-        headers: {'Content-Type': 'application/json'},
+        headers: headers,
       );
 
       if (response.statusCode == 200) {
@@ -53,9 +66,10 @@ class BudgetService {
   // Get current month budget
   Future<Budget?> getCurrentMonthBudget(int userId) async {
     try {
+      final headers = await _getAuthHeaders();
       final response = await http.get(
         Uri.parse('$baseUrl/budgets/current?userId=$userId'),
-        headers: {'Content-Type': 'application/json'},
+        headers: headers,
       );
 
       if (response.statusCode == 200) {
@@ -73,9 +87,10 @@ class BudgetService {
   // Get budget overview
   Future<Budget> getBudgetOverview(int userId) async {
     try {
+      final headers = await _getAuthHeaders();
       final response = await http.get(
         Uri.parse('$baseUrl/budgets/overview?userId=$userId'),
-        headers: {'Content-Type': 'application/json'},
+        headers: headers,
       );
 
       if (response.statusCode == 200) {
@@ -91,9 +106,10 @@ class BudgetService {
   // Create new budget
   Future<Budget> createBudget(int userId, String month, double amount) async {
     try {
+      final headers = await _getAuthHeaders();
       final response = await http.post(
         Uri.parse('$baseUrl/budgets?userId=$userId'),
-        headers: {'Content-Type': 'application/json'},
+        headers: headers,
         body: json.encode({
           'month': month,
           'amount': amount,
@@ -113,9 +129,10 @@ class BudgetService {
   // Update budget
   Future<Budget> updateBudget(int budgetId, int userId, String month, double amount) async {
     try {
+      final headers = await _getAuthHeaders();
       final response = await http.put(
         Uri.parse('$baseUrl/budgets/$budgetId?userId=$userId'),
-        headers: {'Content-Type': 'application/json'},
+        headers: headers,
         body: json.encode({
           'month': month,
           'amount': amount,
@@ -135,9 +152,10 @@ class BudgetService {
   // Delete budget
   Future<bool> deleteBudget(int budgetId, int userId) async {
     try {
+      final headers = await _getAuthHeaders();
       final response = await http.delete(
         Uri.parse('$baseUrl/budgets/$budgetId?userId=$userId'),
-        headers: {'Content-Type': 'application/json'},
+        headers: headers,
       );
 
       return response.statusCode == 204;
